@@ -140,11 +140,21 @@ class TripPlanningService:
 
     @staticmethod
     def _daily_log_payload(plan_result: PlanResult) -> list[dict]:
-        totals_by_day = daily_duty_totals(plan_result.events)
+        if not plan_result.events:
+            return []
+
+        trip_start_day = plan_result.events[0].start.date()
+        trip_end_day = plan_result.events[-1].end.date()
+        totals_by_day = {
+            day: totals
+            for day, totals in daily_duty_totals(plan_result.events).items()
+            if trip_start_day <= day <= trip_end_day
+        }
         events_by_day: dict = {day: [] for day in totals_by_day}
         for event in plan_result.events:
             for day, event_slice in TripPlanningService._event_slices_by_day(event):
-                events_by_day.setdefault(day, []).append(event_slice)
+                if trip_start_day <= day <= trip_end_day:
+                    events_by_day.setdefault(day, []).append(event_slice)
 
         return [
             {
