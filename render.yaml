@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: hos-trip-planner-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --chdir backend config.wsgi:application
+    healthCheckPath: /api/health
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: ROUTING_PROVIDER
+        value: ors
+      - key: ORS_API_KEY
+        sync: false
