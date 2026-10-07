@@ -1,6 +1,7 @@
 services:
   - type: web
     name: hos-trip-planner-api
+    plan: free
     runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --chdir backend config.wsgi:application
