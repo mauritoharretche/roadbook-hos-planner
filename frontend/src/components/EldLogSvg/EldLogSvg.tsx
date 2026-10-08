@@ -29,12 +29,12 @@ export function EldLogSvg({ dailyLog }: EldLogSvgProps) {
   return (
     <div className="eld-log" data-testid="eld-log">
       <div className="eld-scroll">
-        <svg aria-label={`24-hour duty status log for ${dailyLog.date}`} className="eld-svg" role="img" viewBox="0 0 1440 360">
-          <title>{`Daily duty status log for ${formatDate(dailyLog.date)}`}</title>
+        <svg aria-label={`24-hour UTC duty status log for ${dailyLog.date}`} className="eld-svg" role="img" viewBox="0 0 1440 360">
+          <title>{`Daily duty status log for ${formatDate(dailyLog.date)} (UTC)`}</title>
           <desc>A 24-hour planning visualization. Unplanned gaps are displayed as off duty.</desc>
           <rect fill="#fbfdff" height="360" rx="10" width="1440" x="0" y="0" />
-          <text className="eld-title" x="28" y="32">DAILY DRIVER LOG · PLANNING VIEW</text>
-          <text className="eld-date" x="28" y="56">{formatDate(dailyLog.date)}</text>
+          <text className="eld-title" x="28" y="32">DAILY DRIVER LOG · PLANNING VIEW (UTC)</text>
+          <text className="eld-date" x="28" y="56">{formatDate(dailyLog.date)} · UTC</text>
           <text className="eld-total" x="720" y="32">Driving {formatHours(dailyLog.driving_minutes)}</text>
           <text className="eld-total" x="970" y="32">On duty {formatHours(dailyLog.on_duty_not_driving_minutes)}</text>
           <text className="eld-total" x="1190" y="32">Off duty {formatHours(dailyLog.off_duty_minutes)}</text>
@@ -75,8 +75,8 @@ export function EldLogSvg({ dailyLog }: EldLogSvgProps) {
             const x = xForMinute(interval.startMinute);
             return <line data-testid="duty-transition" key={`transition-${index}`} stroke="#334e68" strokeWidth="2" x1={x} x2={x} y1={rowCenter(previous.dutyStatus)} y2={rowCenter(interval.dutyStatus)} />;
           })}
-          <text className="eld-axis-label" x={plot.left} y="288">MIDNIGHT</text>
-          <text className="eld-axis-label" textAnchor="end" x={plot.left + plot.width} y="288">MIDNIGHT</text>
+          <text className="eld-axis-label" x={plot.left} y="288">MIDNIGHT UTC</text>
+          <text className="eld-axis-label" textAnchor="end" x={plot.left + plot.width} y="288">MIDNIGHT UTC</text>
         </svg>
       </div>
       <div className="eld-remarks">

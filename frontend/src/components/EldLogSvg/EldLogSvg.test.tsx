@@ -11,6 +11,7 @@ function dailyLog(events: TripEvent[]): DailyLog {
 test("empty day renders a complete 24-hour off-duty graph", () => {
   render(<EldLogSvg dailyLog={dailyLog([])} />);
 
+  expect(screen.getAllByText("MIDNIGHT UTC")).toHaveLength(2);
   const [offDuty] = screen.getAllByTestId("duty-segment");
   expect(offDuty).toHaveAttribute("data-status", "OFF_DUTY");
   expect(offDuty).toHaveAttribute("data-start-minute", "0");

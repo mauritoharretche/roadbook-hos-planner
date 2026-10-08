@@ -15,3 +15,17 @@ test("shows client validation errors instead of submitting incomplete form data"
   expect(screen.getByText("Enter a cycle value between 0 and 70 hours.")).toBeInTheDocument();
   expect(onSubmit).not.toHaveBeenCalled();
 });
+
+test("interprets the datetime-local departure input as UTC", () => {
+  const onSubmit = vi.fn();
+  render(<TripForm isLoading={false} onSubmit={onSubmit} />);
+
+  fireEvent.change(screen.getByLabelText("Departure date and time (UTC)"), {
+    target: { value: "2026-10-07T08:30" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Calculate trip" }));
+
+  expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
+    departure_at: "2026-10-07T08:30:00.000Z",
+  }));
+});

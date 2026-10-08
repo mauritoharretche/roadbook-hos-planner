@@ -25,7 +25,7 @@ export function RouteMap({ route }: RouteMapProps) {
           <p className="eyebrow">Route overview</p>
           <h2>Planned route</h2>
         </div>
-        <span className="map-caption">Mock route geometry</span>
+        <span className="map-caption">Route geometry</span>
       </div>
       <MapContainer center={center} className="route-map" scrollWheelZoom={false} zoom={7}>
         <TileLayer

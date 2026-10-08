@@ -25,6 +25,7 @@ h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 8px; font-size: clamp(1.65rem, 3vw, 2.35rem); letter-spacing: -.045em; }
 h2 { margin-bottom: 0; font-size: 1.25rem; letter-spacing: -.025em; }
 .form-intro > p:last-child { margin-bottom: 26px; color: #526c85; line-height: 1.55; }
+.timezone-note { margin: 10px 0 0; color: #627d98; font-size: .78rem; line-height: 1.4; }
 .form-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; align-items: start; }
 .field { display: grid; gap: 7px; color: #243b53; font-size: .84rem; font-weight: 700; }
 .field input { width: 100%; min-height: 44px; padding: 10px 11px; color: #102a43; background: #f9fbfd; border: 1px solid #bfd0df; border-radius: 9px; outline: none; transition: border-color .15s, box-shadow .15s; }

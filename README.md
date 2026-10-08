@@ -96,6 +96,9 @@ Daily SVG logs show all unplanned portions of a calendar day as visual
 off-duty gaps. This is renderer-only normalization: it does not change backend
 HOS events, totals, or cycle calculations.
 
+All planning timestamps, calendar-day boundaries, and UI date/time labels use
+UTC. The optional departure field is explicitly interpreted as UTC.
+
 ## Routing
 
 `MockRoutingProvider` is deterministic and supports the documented demo

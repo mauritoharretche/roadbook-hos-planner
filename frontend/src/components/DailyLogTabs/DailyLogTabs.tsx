@@ -19,6 +19,7 @@ export function DailyLogTabs({ dailyLogs }: DailyLogTabsProps) {
         <div>
           <p className="eyebrow">Daily logs</p>
           <h2>Duty status by day</h2>
+          <p className="timezone-note">All times are shown in UTC.</p>
         </div>
         <span className="event-count">{dailyLogs.length} day{dailyLogs.length === 1 ? "" : "s"}</span>
       </div>

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 
 import type { TripPlanRequest } from "../../types/trip";
+import { departureInputToUtcIso } from "../../utils/formatters";
 
 interface TripFormProps {
   isLoading: boolean;
@@ -40,7 +41,7 @@ export function TripForm({ isLoading, onSubmit }: TripFormProps) {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    const departure = values.departure_at ? new Date(values.departure_at).toISOString() : undefined;
+    const departure = values.departure_at ? departureInputToUtcIso(values.departure_at) : undefined;
     onSubmit({
       current_location: values.current_location.trim(),
       pickup_location: values.pickup_location.trim(),
@@ -93,13 +94,14 @@ export function TripForm({ isLoading, onSubmit }: TripFormProps) {
         />
         <Field
           error={errors.departure_at}
-          label="Departure date and time"
+          label="Departure date and time (UTC)"
           name="departure_at"
           onChange={update}
           type="datetime-local"
           value={values.departure_at}
         />
       </div>
+      <p className="timezone-note">All planning times and daily logs are shown in UTC.</p>
       <button className="primary-button" disabled={isLoading} type="submit">
         {isLoading ? "Calculating trip…" : "Calculate trip"}
       </button>
@@ -149,7 +151,7 @@ function validate(values: FormValues): FormErrors {
   if (!values.current_cycle_used_hours || !Number.isFinite(cycleHours) || cycleHours < 0 || cycleHours > 70) {
     errors.current_cycle_used_hours = "Enter a cycle value between 0 and 70 hours.";
   }
-  if (values.departure_at && Number.isNaN(new Date(values.departure_at).valueOf())) {
+  if (values.departure_at && Number.isNaN(new Date(`${values.departure_at}Z`).valueOf())) {
     errors.departure_at = "Enter a valid departure date and time.";
   }
   return errors;

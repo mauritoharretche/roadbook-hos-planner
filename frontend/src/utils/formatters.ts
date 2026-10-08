@@ -14,10 +14,12 @@ export function formatMiles(miles: number): string {
 }
 
 export function formatDateTime(value: string): string {
-  return new Intl.DateTimeFormat(undefined, {
+  const formatted = new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "UTC",
   }).format(new Date(value));
+  return `${formatted} UTC`;
 }
 
 export function formatDate(value: string): string {
@@ -26,7 +28,13 @@ export function formatDate(value: string): string {
     month: "short",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   }).format(new Date(`${value}T12:00:00`));
+}
+
+/** Treat a datetime-local form value as an explicitly entered UTC planning time. */
+export function departureInputToUtcIso(value: string): string {
+  return new Date(`${value}Z`).toISOString();
 }
 
 export function eventLabel(eventType: string): string {
