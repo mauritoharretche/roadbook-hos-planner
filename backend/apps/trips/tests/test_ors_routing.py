@@ -1,4 +1,5 @@
-from unittest.mock import patch
+import json
+from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError
 
 import pytest
@@ -35,6 +36,48 @@ def test_ors_geocoding_transforms_successful_response():
     assert location.latitude == -34.9214
     assert location.longitude == -57.9544
     assert fetch.called
+
+
+def test_ors_uses_heigit_geocoding_and_directions_endpoints():
+    start = GeocodedLocation("La Plata", "La Plata", -34.9214, -57.9544)
+    end = GeocodedLocation("Buenos Aires", "Buenos Aires", -34.6037, -58.3816)
+    response = MagicMock()
+    response.__enter__.return_value.read.side_effect = [
+        json.dumps(
+            {
+                "features": [
+                    {
+                        "geometry": {"coordinates": [-57.9544, -34.9214]},
+                        "properties": {"label": "La Plata, Buenos Aires, Argentina"},
+                    }
+                ]
+            }
+        ).encode("utf-8"),
+        json.dumps(
+            {
+                "features": [
+                    {
+                        "properties": {"summary": {"distance": 1609.344, "duration": 3600}},
+                        "geometry": {"coordinates": [[-57.9544, -34.9214], [-58.3816, -34.6037]]},
+                    }
+                ]
+            }
+        ).encode("utf-8"),
+    ]
+
+    with patch("apps.trips.routing.ors.urlopen", return_value=response) as urlopen:
+        provider().geocode("La Plata")
+        provider().calculate_route([start, end])
+
+    geocode_request = urlopen.call_args_list[0].args[0]
+    directions_request = urlopen.call_args_list[1].args[0]
+    assert geocode_request.full_url == "https://api.heigit.org/pelias/v1/search?text=La+Plata&size=1"
+    assert geocode_request.method == "GET"
+    assert directions_request.full_url == (
+        "https://api.heigit.org/openrouteservice/v2/directions/driving-car/geojson"
+    )
+    assert directions_request.method == "POST"
+    assert directions_request.get_header("Authorization") == "test-api-key"
 
 
 def test_ors_route_transforms_geojson_per_leg():
@@ -76,14 +119,14 @@ def test_ors_route_transforms_geojson_per_leg():
 def test_ors_timeout_becomes_routing_upstream_error():
     with patch("apps.trips.routing.ors.urlopen", side_effect=TimeoutError):
         with pytest.raises(RoutingUpstreamError, match="request failed"):
-            provider()._fetch_json("https://api.openrouteservice.org/geocode/search?text=x")
+            provider()._fetch_json("https://api.heigit.org/pelias/v1/search?text=x")
 
 
 def test_ors_http_error_becomes_routing_upstream_error():
-    upstream_error = HTTPError("https://api.openrouteservice.org", 429, "rate limited", None, None)
+    upstream_error = HTTPError("https://api.heigit.org", 429, "rate limited", None, None)
     with patch("apps.trips.routing.ors.urlopen", side_effect=upstream_error):
         with pytest.raises(RoutingUpstreamError, match="request failed"):
-            provider()._fetch_json("https://api.openrouteservice.org/geocode/search?text=x")
+            provider()._fetch_json("https://api.heigit.org/pelias/v1/search?text=x")
 
 
 def test_ors_malformed_geocode_response_becomes_routing_response_error():

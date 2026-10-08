@@ -19,7 +19,7 @@ from .base import (
 class OpenRouteServiceRoutingProvider(RoutingProvider):
     """Server-side adapter for ORS geocoding and GeoJSON driving directions."""
 
-    base_url = "https://api.openrouteservice.org"
+    base_url = "https://api.heigit.org"
     timeout_seconds = 10
 
     def __init__(self, api_key: str) -> None:
@@ -31,7 +31,7 @@ class OpenRouteServiceRoutingProvider(RoutingProvider):
         normalized_query = query.strip()
         try:
             response = self._fetch_json(
-                f"{self.base_url}/geocode/search?{urlencode({'text': normalized_query, 'size': 1})}"
+                f"{self.base_url}/pelias/v1/search?{urlencode({'text': normalized_query, 'size': 1})}"
             )
             feature = response["features"][0]
             longitude, latitude = feature["geometry"]["coordinates"][:2]
@@ -53,7 +53,7 @@ class OpenRouteServiceRoutingProvider(RoutingProvider):
 
     def _route_leg(self, start: GeocodedLocation, end: GeocodedLocation) -> RouteLeg:
         response = self._fetch_json(
-            f"{self.base_url}/v2/directions/driving-car/geojson",
+            f"{self.base_url}/openrouteservice/v2/directions/driving-car/geojson",
             payload={"coordinates": [[start.longitude, start.latitude], [end.longitude, end.latitude]]},
         )
         try:
